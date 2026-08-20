@@ -1,0 +1,34 @@
+[Unit]
+Description=LLM Gateway (FastAPI, /v1 OpenAI proxy + /api admin)
+After=network.target
+
+[Service]
+Type=simple
+
+# 运行用户：建议创建专用账号，避免使用 root
+# sudo useradd -r -s /usr/sbin/nologin -d /opt/llm-gateway llm-gateway
+# sudo chown -R llm-gateway:llm-gateway /opt/llm-gateway
+User=llm-gateway
+Group=llm-gateway
+
+# 后端代码根目录（WorkingDirectory 必须指向 server/，sqlite 落在 server/gateway.db）
+WorkingDirectory=/opt/llm-gateway/server
+
+Environment=PYTHONUNBUFFERED=1
+
+# 使用虚拟环境中的 Python 启动单实例 uvicorn（同时提供 /v1/* 网关面与 /api/* 管理面）
+ExecStart=/opt/llm-gateway/venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+Restart=always
+RestartSec=3
+
+# ---- 基本 hardening（可选，按需保留/裁剪） ----
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+PrivateDevices=true
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target
