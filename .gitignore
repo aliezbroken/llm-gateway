@@ -1,0 +1,19 @@
+# --- 运行/部署产物 ---
+server/.env
+*.db
+*.db-journal
+server/venv/
+server/.venv/
+__pycache__/
+*.pyc
+
+# --- 前端 ---
+web/node_modules/
+web/dist/
+
+# --- 系统/编辑器 ---
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
