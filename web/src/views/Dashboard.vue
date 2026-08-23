@@ -23,16 +23,11 @@
     </el-card>
 
     <el-row :gutter="16" class="stat-row">
-      <el-col :span="8" v-for="card in cards" :key="card.key">
+      <el-col :span="6" v-for="card in cards" :key="card.key">
         <el-card shadow="hover">
           <div class="stat-card">
             <div class="stat-label">{{ card.label }}</div>
-            <div class="stat-value">
-              {{ card.value }}
-              <template v-if="card.total !== null && card.total !== undefined">
-                <span class="stat-total">/ {{ card.total }}</span>
-              </template>
-            </div>
+            <div class="stat-value">{{ card.value }}</div>
           </div>
         </el-card>
       </el-col>
@@ -119,20 +114,17 @@ function params() {
 }
 
 const cards = computed(() => [
+  // 剩余配额是实时余额（/api/auth/me），不要与统计口径混淆
+  { key: 'quota', label: '剩余配额', value: auth.user?.quota ?? '-' },
   { key: 'requests', label: '请求数', value: overviewData.value.requests ?? '-' },
-  {
-    key: 'tokens',
-    label: '总 Token',
-    value: overviewData.value.total_tokens ?? '-',
-    total: overviewData.value.total_distributed_quota ?? null
-  },
+  { key: 'tokens', label: '总 Token', value: overviewData.value.total_tokens ?? '-' },
   { key: 'latency', label: '平均延迟 (ms)', value: overviewData.value.avg_latency_ms ?? '-' }
 ])
 
 async function loadAll() {
   loading.value = true
   try {
-    await Promise.all([loadOverview(), loadTrend(), loadLatency()])
+    await Promise.all([auth.fetchMe().catch(() => {}), loadOverview(), loadTrend(), loadLatency()])
   } finally {
     loading.value = false
   }
@@ -282,12 +274,6 @@ onBeforeUnmount(() => {
   margin-top: 6px;
   color: #303133;
   line-height: 1.2;
-}
-.stat-total {
-  font-size: 15px;
-  font-weight: 400;
-  color: #909399;
-  margin-left: 2px;
 }
 .chart-row {
   margin-bottom: 20px;
