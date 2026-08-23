@@ -23,7 +23,7 @@
     </el-card>
 
     <el-row :gutter="16" class="stat-row">
-      <el-col :span="6" v-for="card in cards" :key="card.key">
+      <el-col :span="4" v-for="card in cards" :key="card.key">
         <el-card shadow="hover">
           <div class="stat-card">
             <div class="stat-label">{{ card.label }}</div>
@@ -118,6 +118,9 @@ const cards = computed(() => [
   { key: 'quota', label: '剩余配额', value: auth.user?.quota ?? '-' },
   { key: 'requests', label: '请求数', value: overviewData.value.requests ?? '-' },
   { key: 'tokens', label: '总 Token', value: overviewData.value.total_tokens ?? '-' },
+  { key: 'quota_cost', label: '配额消耗', value: overviewData.value.quota_cost ?? '-' },
+  // 全局历史累计发放总额（不含扣减），仅作参考，非任何用户的余额
+  { key: 'distributed', label: '累计发放配额', value: overviewData.value.total_distributed_quota ?? '-' },
   { key: 'latency', label: '平均延迟 (ms)', value: overviewData.value.avg_latency_ms ?? '-' }
 ])
 
