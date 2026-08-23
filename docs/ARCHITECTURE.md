@@ -83,7 +83,7 @@ User(id, username UNIQUE, password_hash, role[admin|user], status[active|disable
      quota INT, created_at, updated_at, remark)
 
 ApiToken(id, user_id FK, name, key_hash UNIQUE, status[active|disabled],
-     quota_limit INT NULL,   -- 令牌额度上限（总消耗上限，NULL=不限制）
+     quota_limit INT NULL,   -- 令牌额度上限（总消耗上限，NULL/0=不限制）
      allowed_ips JSON,       -- IP 白名单（[]=不限制）
      max_concurrency INT,    -- 并发上限（0=不限制）
      created_at, last_used_at)

@@ -1,4 +1,4 @@
-﻿"""Gateway proxy orchestration: auth -> limits -> forward -> usage -> billing -> logs.
+"""Gateway proxy orchestration: auth -> limits -> forward -> usage -> billing -> logs.
 
 Runs inside a single request lifecycle; uses the non-blocking httpx AsyncClient
 to stream byte-for-byte to/from the upstream while tracking SSE `usage`.
@@ -92,9 +92,17 @@ def _finalize(db: Session, user: User, token, ctx: dict, usage_dict: dict | None
     completion = pick(usage_dict, "completion_tokens")
     total = prompt + completion
     cost = _compute_cost(db, model, prompt, completion) if usage_dict else 0
-    if cost > user.quota:
-        cost = user.quota
-    user.quota -= cost
+    try:
+        # `user` was loaded at request start; a long stream may outlive concurrent
+        # charges and admin grants. Re-read the balance or the stale snapshot would
+        # overwrite them (wiping a fresh grant -> premature 402 out of credits).
+        db.refresh(user)
+        if cost > user.quota:
+            cost = user.quota
+        user.quota -= cost
+    except Exception:  # noqa: BLE001 - billing must never crash a served response
+        db.rollback()
+        cost = 0
     log = UsageLog(
         user_id=user.id,
         token_id=token.id,

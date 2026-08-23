@@ -27,7 +27,7 @@
           </template>
         </el-table-column>
         <el-table-column label="额度上限" width="110">
-          <template #default="{ row }">{{ row.quota_limit ?? '不限' }}</template>
+          <template #default="{ row }">{{ row.quota_limit || '不限' }}</template>
         </el-table-column>
         <el-table-column label="已用" width="100">
           <template #default="{ row }">{{ row.used_quota ?? '-' }}</template>

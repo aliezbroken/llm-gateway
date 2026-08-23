@@ -82,7 +82,7 @@ def validate_token(db: Session, api_key: str, client_ip: str) -> ApiToken:
         allowed = set(json.loads(token.allowed_ips))
         if client_ip not in allowed:
             raise errors.raise_http(403, errors.ErrorCode.IP_NOT_ALLOWED, "IP not allowed", "invalid_request_error")
-    if token.quota_limit is not None:
+    if token.quota_limit:  # NULL/0 = unlimited
         used = get_token_used_quota(db, token.id)
         if used >= token.quota_limit:
             raise errors.raise_http(402, errors.ErrorCode.INSUFFICIENT_QUOTA, "Token quota limit reached", "invalid_request_error")
