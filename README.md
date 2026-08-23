@@ -67,6 +67,14 @@ npm install
 npm run dev                                          # http://localhost:5173，/api 代理到 :8000
 ```
 
+**测试**（pytest，自带 mock 上游，无需真实 vLLM）：
+
+```bash
+cd server
+pip install -r requirements-dev.txt
+python -m pytest                                     # tests/ 目录
+```
+
 首次启动自动建库并写入管理员：见下方【默认账号】。
 
 ## 🛠 部署（Ubuntu 22.04）

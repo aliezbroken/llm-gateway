@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 class TokenCreate(BaseModel):
     name: str = Field(default="default", max_length=64)
-    quota_limit: int | None = None  # NULL = unlimited
+    quota_limit: int | None = None  # NULL/0 = unlimited
     allowed_ips: list[str] = []
     max_concurrency: int = 0  # 0 = unlimited
 

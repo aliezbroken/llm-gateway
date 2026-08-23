@@ -14,7 +14,7 @@ class ApiToken(Base):
     name: Mapped[str] = mapped_column(String(64), default="default")
     key_hash: Mapped[str] = mapped_column(String(64), unique=True, index=True, nullable=False)
     status: Mapped[str] = mapped_column(String(16), default="active", index=True)  # active | disabled
-    quota_limit: Mapped[int | None] = mapped_column(BigInteger, nullable=True)  # NULL = unlimited
+    quota_limit: Mapped[int | None] = mapped_column(BigInteger, nullable=True)  # NULL/0 = unlimited
     allowed_ips: Mapped[str] = mapped_column(Text, default="[]")  # JSON list
     max_concurrency: Mapped[int] = mapped_column(Integer, default=0)  # 0 = unlimited
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
